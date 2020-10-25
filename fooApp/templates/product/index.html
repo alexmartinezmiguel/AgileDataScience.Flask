@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% from 'product/common.html' import detail %}
+
+{% block title %}Products{% endblock title %}
+
+{% block main %}
+<div class="row">
+  {% for product in products %}
+    <div class="span12">
+    {{ detail(product,
+      show_edit=false,
+      link_title=true,
+      show_description=false) }}
+    </div>
+  {% else %}
+    <h3 class="span12">No Products.</h3>
+  {% endfor %}
+</div>
+{% endblock main %}

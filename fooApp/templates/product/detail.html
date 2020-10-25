@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% from 'product/common.html' import detail %}
+
+{% block title %}
+  {{ product.name }}
+{% endblock title %}
+
+{% block main %}
+<div class="row">
+  <div class="span12">
+    {{ detail(product) }}
+  </div>
+</div>
+{% endblock main %}

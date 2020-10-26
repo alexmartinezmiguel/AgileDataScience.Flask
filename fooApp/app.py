@@ -16,7 +16,10 @@ app = Flask(__name__)
 
 #Mongodb configuration
 app.config['MONGO_DBNAME'] = 'foodb'
-app.config['MONGO_URI'] = 'mongodb://localhost:27017/foodb'
+#local
+#app.config['MONGO_URI'] = 'mongodb://localhost:27017/foodb'
+#cluster
+app.config['MONGO_URI'] = 'mongodb+srv://alex_martinez_ADS:ADS_course@clusterads.8naea.mongodb.net/foodb?retryWrites=true&w=majority'
 
 app.config['SECRET_KEY'] = 'agiledatascience' # Create your own.
 app.config['SESSION_PROTECTION'] = 'strong'
@@ -78,6 +81,8 @@ def products_list():
   return render_template('product/index.html',
     products=products)
 
+
+
 @app.route('/products/<product_id>/')
 def product_detail(product_id):
   """Provide HTML page with a given product."""
@@ -90,12 +95,28 @@ def product_detail(product_id):
   return render_template('product/detail.html',
     product=product)
 
+
+
 @app.route( 
   '/products/<product_id>/edit/',
   methods=['GET', 'POST'])
 @login_required
 def product_edit(product_id):
-  return 'Form to edit product #.'.format(product_id)
+  """Provide HTML form to edit a given product."""
+  # Query: edit Product object.
+  product = mongo.db.products.find_one({ "_id": ObjectId(product_id) })
+  if product is None:
+    abort(404)
+  form = ProductForm(request.form, product)
+  if request.method == 'POST' and form.validate():
+    mongo.db.products.replace_one({"_id": ObjectId(product_id)},form.data)
+    # Success. Send user back to the detail view.
+    return redirect(url_for('product_detail',
+      product_id=product['_id']))
+  return render_template('product/edit.html', form=form)
+
+
+
 
 @app.route('/products/create/', methods=['GET', 'POST'])
 @login_required
@@ -108,6 +129,8 @@ def product_create():
     return redirect(url_for('products_list'))
   # Either first load or validation error at this point.
   return render_template('product/edit.html', form=form)
+
+
 
 @app.route('/products/<product_id>/delete/', methods=['GET','DELETE'])
 @login_required

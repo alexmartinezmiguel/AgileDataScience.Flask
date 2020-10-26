@@ -3,3 +3,4 @@ Flask-Login
 Flask-Script
 Flask-PyMongo
 WTForms
+dnspython

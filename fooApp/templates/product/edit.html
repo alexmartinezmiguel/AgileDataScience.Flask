@@ -2,7 +2,11 @@
 
 {% from 'product/common.html' import edit_field %}
 
-{% set title = 'Add Product' %}
+{% if request.endpoint.endswith('edit') %}
+  {% set title = 'Edit Product' %}
+{% else %}
+  {% set title = 'Add Product' %}
+{% endif %}
 
 {% block title %}{{ title }}{% endblock title %}
 

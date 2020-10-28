@@ -107,7 +107,7 @@ def product_edit(product_id):
   product = mongo.db.products.find_one({ "_id": ObjectId(product_id) })
   if product is None:
     abort(404)
-  form = ProductForm(request.form, product)
+  form = ProductForm(request.form, data=product)
   if request.method == 'POST' and form.validate():
     mongo.db.products.replace_one({"_id": ObjectId(product_id)},form.data)
     # Success. Send user back to the detail view.
